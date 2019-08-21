@@ -1,0 +1,126 @@
+# custom IntelliJ IDEA VM options
+
+# custom IntelliJ IDEA VM options
+
+-ea
+-server
+-Xms1024m
+-Xmx4096m
+-Xss16m
+-XX:MaxMetaspaceSize=2G
+-XX:MetaspaceSize=1G
+-XX:ConcGCThreads=8
+-XX:ParallelGCThreads=8
+-XX:NewRatio=1
+-XX:ReservedCodeCacheSize=512m
+-XX:+AlwaysPreTouch
+-XX:+UseConcMarkSweepGC
+-XX:+DoEscapeAnalysis
+-XX:+TieredCompilation
+-XX:SoftRefLRUPolicyMSPerMB=50
+-XX:+UnlockExperimentalVMOptions
+-Djava.net.preferIPv4Stack=true
+-Dsun.io.useCanonCaches=false
+-XX:LargePageSizeInBytes=256m
+-XX:+UseCodeCacheFlushing
+-XX:+DisableExplicitGC
+-XX:+ExplicitGCInvokesConcurrent
+-XX:+PrintGCDetails
+-XX:+PrintFlagsFinal
+-XX:+AggressiveOpts
+-XX:+CMSClassUnloadingEnabled
+-XX:CMSInitiatingOccupancyFraction=60
+-XX:+CMSParallelRemarkEnabled
+-XX:+UseAdaptiveGCBoundary
+## -XX:+UseSplitVerifier
+-XX:CompileThreshold=10000
+-XX:+OptimizeStringConcat
+## -XX:+UseStringCache
+## -XX:+UseFastAccessorMethods
+-XX:+UnlockDiagnosticVMOptions
+-Djdk.http.auth.tunneling.disabledSchemes=""
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:+UseCompressedOops
+-XX:-OmitStackTraceInFastThrow
+-Dfile.encoding=UTF-8
+-Xverify:none
+
+-XX:ErrorFile=$USER_HOME/java_error_in_idea_%p.log
+-XX:HeapDumpPath=$USER_HOME/java_error_in_idea.hprof
+
+### OLD SETTINGS
+
+### -Xms2g
+### -Xmx3g
+### -XX:ReservedCodeCacheSize=240m
+###
+### -XX:SoftRefLRUPolicyMSPerMB=50
+### -ea
+### -Dsun.io.useCanonCaches=false
+### -Djava.net.preferIPv4Stack=true
+### -XX:+HeapDumpOnOutOfMemoryError
+### -XX:-OmitStackTraceInFastThrow
+### -Dawt.useSystemAAFontSettings=lcd
+### -Dsun.java2d.renderer=sun.java2d.marlin.MarlinRenderingEngine
+###
+### # The potential advantage of this approach is that the young generation will grow and shrink automatically when the JVM dynamically adjusts the total heap size at run time.
+### # Use this if the projects you work with vary drastically in their memory usage.
+### # I recommend a ratio between 2 and 4. This means the young generation will be 1/3 or 1/4 the size of the old generation.
+### # -XX:NewRatio=2
+###
+### # Introduced in JDK 7 Update 4 G1 is similar to CMS but is built to support large heaps (4GB and larger).
+### # It breaks up the generations into smaller regions and keeps tracks of regions that produce more garbage.
+### # This is supposed to prevent large "stop the world" GC events that can occur in large heaps.
+### -XX:+UseG1GC
+### #-XX:-UseParNewGC
+### -XX:-UseConcMarkSweepGC
+### -XX:SurvivorRatio=8
+###
+### # These are minor changes and will not affect the rest of your configuration. Not a necessary flag but may see some performance improvements.
+### # Keep in mind the changes this flag turns on change for each java release so make sure to re-evaluate when/if Intellij changes the version of Java packaged with Intellij!
+### -XX:+AggressiveOpts
+### # Turns on some peformance optimizations that are expected to be on by default in upcoming releases.
+###
+### #-ea
+### #-server
+### #-Xms2G
+### ##-Xmx4096M
+### #-Xmx3G
+### #-Xss2m
+### #-XX:MaxMetaspaceSize=2G
+### #-XX:ReservedCodeCacheSize=512m
+### #-XX:MetaspaceSize=512m
+### #-XX:+UseConcMarkSweepGC
+### #-XX:+DoEscapeAnalysis
+### #-XX:SoftRefLRUPolicyMSPerMB=50
+### #-XX:+UnlockExperimentalVMOptions
+### #-Djava.net.preferIPv4Stack=true
+### #-Dsun.io.useCanonCaches=false
+### #-XX:LargePageSizeInBytes=256m
+### #-XX:+UseCodeCacheFlushing
+### #-XX:ParallelGCThreads=8
+### #-XX:+DisableExplicitGC
+### #-XX:+ExplicitGCInvokesConcurrent
+### #-XX:+PrintGCDetails
+### #-XX:+PrintFlagsFinal
+### #-XX:+AggressiveOpts
+### #-XX:+CMSClassUnloadingEnabled
+### #-XX:CMSInitiatingOccupancyFraction=60
+### #-XX:+CMSParallelRemarkEnabled
+### #-XX:+UseAdaptiveGCBoundary
+### #-XX:+UseSplitVerifier
+### #-XX:CompileThreshold=10000
+### #-XX:+OptimizeStringConcat
+### #-XX:+UseStringCache
+### #-XX:+UseFastAccessorMethods
+### #-XX:+UnlockDiagnosticVMOptions
+### #-Djdk.http.auth.tunneling.disabledSchemes=""
+### #-XX:+HeapDumpOnOutOfMemoryError
+### #-XX:+UseCompressedOops
+### #-XX:-OmitStackTraceInFastThrow
+### #-Dfile.encoding=UTF-8
+### #-Xverify:none
+### #
+### #-XX:ErrorFile=$USER_HOME/java_error_in_idea_%p.log
+### #-XX:HeapDumpPath=$USER_HOME/java_error_in_idea.hprof
+###

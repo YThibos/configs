@@ -1,0 +1,825 @@
+To test:
+ag (search text ...)
+
+
+Settings > Network > Proxy
+Automatic : http://proxy.onprvp.fgov.be:8080/proxy.pac
+=> May have to use manual instead:
+proxyusr.fediap.be:8080
+and exclusion for localhost, ...
+"localhost, 127.0.0.0/8, ::1, 10.5.0.0/16, lp-20140054, 10.9.0.0/16"
+=> Issues with OWA if using manual ???
+--10.5.*, 192.168.*, 127.0.0.1, 10.9.8.*
+
+DNF config for Proxy:
+=====================
+http://dnf.readthedocs.io/en/latest/conf_ref.html
+
+edit /etc/dnf/dnf.conf
+add lines (proxy + no check for https - due to bad certificate):
+proxy=http://proxyusr.fediap.be:8080
+sslverify=False
+
+Also think about adding to .bashrc / .zshrc:
+export HTTP_PROXY=http://proxyusr.fediap.be:8080
+export HTTPS_PROXY=http://proxyusr.fediap.be:8080
+export FTP_PROXY=http://proxyusr.fediap.be:8080
+
+another way to execute command with those proxy config:
+http_proxy=http://proxyusr.fediap.be:8080 https_proxy=http://proxyusr.fediap.be:8080 rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+
+mymail.onprvp.fgov.be 143 starttls normalpassword
+mysmtp.onprvp.fgov.be 587 starttls normalpassword
+LDAP:
+server: Spr-cen01.onprvp.fgov.be
+port: 3268
+login method: Using distinguised name (DN)
+login: ONPRVP\username
+search base: DC=onprvp,DC=fgov,DC=be
+
+stylish (firefox)
+mymail.onprvp.fgov.be
+matching:.+/owa/.*(mail|calendar|people|tasks)
+=>mymail.onprvp.fgov.be
+
+Pidgin:
+=======
+sudo dnf install pidgin
+sudo dnf install pidgin-sipe
+Config:
+nicolas.lambot@onprvp.fgov.be  (not sfpd; it doesn't work !)
+onprvp\lamni
+=> Sommercial product equivalent to skype:
+https://tel.red/repos.htm#fedora_cli
+=> Limit of 2 minutes screen sharing / audio call
+
+Pidgin for Skype for Business
+==============================
+https://askubuntu.com/questions/720628/free-software-to-connect-to-skype-for-business
+
+On Fedora:
+https://copr.fedorainfracloud.org/coprs/dwmw2/sipecollab/
+
+
+
+http://gregcor.com/2011/05/07/fix-dual-monitors-in-gnome-3-aka-my-workspaces-are-broken/
+=> activate workspaces for all screens
+OR from gnome "tweaks" > Workspaces > Display Handling > Workspaces span display
+
+Adding certificate as trusted one for the OS:
+=> File : proxy-ca.onprvp.fgov.be.pem
+(15:03:27) BRESSINCK Tuur: just put the file in  /etc/pki/ca-trust/source/anchors/ and run sudo update-ca-trus
+(15:03:42) BRESSINCK Tuur: update-ca-trust (with a t at the end)
+
+=> Not sufficient
+
+[09:49:14] /etc/ssl/certs $ ls -l 
+lrwxrwxrwx. 1 root root   51 Aug  9 09:44 RVP-ONP-LPAIssuingCA.crt -> /usr/share/ca-certificates/RVP-ONP-LPAIssuingCA.crt 
+lrwxrwxrwx. 1 root root   50 Aug  9 09:44 RVP-ONP-LPAPolicyCA.crt -> /usr/share/ca-certificates/RVP-ONP-LPAPolicyCA.crt 
+lrwxrwxrwx. 1 root root   48 Aug  9 09:44 RVP-ONP-LPARootCA.crt -> /usr/share/ca-certificates/RVP-ONP-LPARootCA.crt 
+ 
+located in smb://onprvp.fgov.be/files/group/OTHERFILES/Columbia/project/Theseos_Team/Workspace/Public/Linux/Certificates
+
+---
+go in folder containing the certs
+sudo cp -r * /usr/share/ca-certificates/
+cd /etc/ssl/certs
+sudo ln -s /usr/share/ca-certificates/RVP-ONP-LPA* .
+update-ca-trust
+
+Adding "skype" smileys:
+-----------------------
+https://www.pidginthemes.com/smilies/skype%20emoticons%20set/
+
+
+Encoding issues:
+================
+-Dfile.encoding=ISO-8859-1
+-Dproject.build.sourceEncoding=ISO-8859-1 -Dproject.reporting.outputEncoding=ISO-8859-1
+
+[lamni@lp-20140054 lookups-model]$ more ~/.mavenrc
+LANG="en_US.ISO-8859-1"
+LC_ALL=$LANG
+
+ISSUE for maven execution from intelliJ ! => lookups-model :
+Failed tests:
+  testLanguageLookup(be.rvponp.lookups.csv.UTLanguageLookupTable): expected:<N[??]rlandais> but was:<N[??]rlandais>
+=> Fix by manually setting in intelliJ:
+Build > Build Tools > Maven > Runner > Environment variables:
+LANG=en_US.ISO-8859-1
+LC_ALL=en_US.ISO-8859-1
+
+Maven 2 & 3
+===========
+1st install mvn with dnf (will install maven 3)
+then for mvn 2 alternative :
+Download and extract somewhere (from http://archive.apache.org/dist/maven/maven-2/2.2.1/binaries/ )
+register alternatives
+sudo alternatives --install /usr/bin/mvn mvn /usr/share/maven/bin/mvn 200000
+sudo alternatives --install /usr/bin/mvn mvn /home/lamni/development/maven/maven-2.2.1/bin/mvn 200000
+
+When you want to switch:
+sudo alternatives --config mvn
++ In intelliJ
+Build > Build Tools > Maven > Runner > Environment variables:
+LANG=en_US.ISO-8859-1
+LC_ALL=en_US.ISO-8859-1
+
+
+Checking Used undeclared / Unused declared dependencies:
+mvn dependency:analyze -DignoreNonCompile
+=> To check for the tests:
+mvn dependency:analyze
+
+JAVA:
+=====
+https://fedoraproject.org/wiki/JDK_on_Fedora
+
+
+
+JBoss:
+======
+In intelliJ change Default > Jboss > Local:
+-Xmx1024m -Dfile.encoding=ISO-8859-1 -Duser.timezone="Europe/Brussels"
+
+-P="../standalone/configuration/theseosSystem.properties" -P="../standalone/configuration/theseosDb.properties" -P="../standalone/configuration/theseosLogin.properties" -b 0.0.0.0
+
+1st startup:
+17:18	Error running 'TheseosTrunk': Cannot run program "/home/lamni/development/JBOSS/TheseosTrunk/bin/standalone.sh" (in directory "/home/lamni/development/JBOSS/TheseosTrunk/bin"): error=13, Permission denied
+=>
+cd /home/lamni/development/JBOSS/TheseosTrunk/bin
+chmod +x *.sh
+
+For BusinessLayer:
+-Xmx1024m -Dfile.encoding=ISO-8859-1 -Duser.timezone="Europe/Brussels" -Djboss.socket.binding.port-offset=100
+Program Argument : -b 0.0.0.0
+
+
+Log4J config
+============
+
+Hibernate logging:
+https://stackoverflow.com/questions/436276/configuring-hibernate-logging-using-log4j-xml-config-file
+
+Formatted for pasting into a log4j XML configuration file:
+
+<!-- Log all SQL DML statements as they are executed -->
+<Logger name="org.hibernate.SQL" level="debug" />
+<!-- Log all JDBC parameters -->
+<Logger name="org.hibernate.type" level="TRACE" />
+<!-- Log all SQL DDL statements as they are executed -->
+<Logger name="org.hibernate.tool.hbm2ddl" level="debug" />
+<!-- Log the state of all entities (max 20 entities) associated with the session at flush time -->
+<Logger name="org.hibernate.pretty" level="debug" />
+<!-- Log all second-level cache activity -->
+<Logger name="org.hibernate.cache" level="debug" />
+<!-- Log transaction related activity -->
+<Logger name="org.hibernate.transaction" level="debug" />
+<!-- Log all JDBC resource acquisition -->
+<Logger name="org.hibernate.jdbc" level="debug" />
+<!-- Log HQL and SQL ASTs during query parsing -->
+<Logger name="org.hibernate.hql.ast.AST" level="debug" />
+<!-- Log all JAAS authorization requests -->
+<Logger name="org.hibernate.secure" level="debug" />
+<!-- Log everything (a lot of information, but very useful for troubleshooting) -->
+<Logger name="org.hibernate" level="debug" />
+
+NB: Most of the loggers use the DEBUG level, however org.hibernate.type uses TRACE. In previous versions of Hibernate org.hibernate.type also used DEBUG, but as of Hibernate 3 you must set the level to TRACE (or ALL) in order to see the JDBC parameter binding logging.
+
+And a category is specified as such:
+
+<logger name="org.hibernate">
+    <level value="ALL" />
+    <appender-ref ref="FILE"/>
+</logger>
+It must be placed before the root element.
+=>
+
+<!-- Log all SQL DML statements as they are executed -->
+<logger category="org.hibernate.SQL">
+	<level name="DEBUG"/>
+</logger> 
+<!-- Log all JDBC parameters -->
+<logger category="org.hibernate.type">
+	<level name="TRACE"/>
+</logger>
+
+
+XlDeploy
+========
+
+
+CANART Sébastien
+
+10:27 AM
+
+
+http://lpr-xldeploy01:4516/technical-preview.html#/
+tu pourrais te débrouiler avec la beta de l'interface html
+si tu vas dans Environments/Theseos/Test/Fat01/Theseos-develop
+tu peux voir le champ version
+Applications/Development-Branch/Theseos-develop/develop-18.06-20180105-022516
+par exemple
+
+
+
+---
+cd /home/lamni/development/git/theseos/applications/Theseos-Workflows/Vaadin-WorkflowsDependencies
+mvn clean install -rf amountJustification-services
+
+
+---
+Config Linux:
+=============
+Script authentification réseau: Script_auth_CANAS.zip
+
+
+
+
+Database
+========
+
+http://ldv-jenkins01:8080/jenkins/job/BuildTeam/job/Refresh_Pluggable_Database/
+http://ldv-jenkins01:8080/jenkins/job/BuildTeam/job/ForceRefresh-fullsize-database/
+
+OP1:
+jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=sdb_onp1)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=theseos.rvponp.fgov.be)))
+
+(10:21:27) ARTE Julien: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=sdb_onp1)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=theseos.rvponp.fgov.be))) 
+(10:23:14) ARTE Julien: op1
+(10:23:15) ARTE Julien: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=sdb_op1s)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=op1s.rvponp.fgov.be))) 
+(10:23:20) ARTE Julien: op1s
+
+
+
+eID & VPN:
+==========
+https://eid.belgium.be/en/linux-eid-software-installation
+
+sudo dnf install eid-archive-fedora-2016-2.noarch.rpm
+sudo dnf install eid-mw
+sudo dnf install eid-viewer
+
+For the driver, install:
+sudo dnf install opensc
+
+
+(sudo dnf install pcsc-tools)
+
+---
+
+Finding the correct path to you ID certificate:
+
+sudo dnf install gnutls-utils
+
+p11tool --list-all --login
+=> select the path with "BELPIC" (& "Belgium%20eID")
+example:
+  "pkcs11:model=p11-kit-trust;manufacturer=PKCS%2311%20Kit;serial=1;token=System%20Trust"
+  "pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=9D21754812924197;token=BELPIC%20%28Basic%20PIN%29" <== This one
+Other example:
+[lamni@lp-20140054-linux ~]$ p11tool --list-all
+warning: no token URL was provided for this operation; the available tokens are:
+
+pkcs11:model=p11-kit-trust;manufacturer=PKCS%2311%20Kit;serial=1;token=System%20Trust
+pkcs11:model=p11-kit-trust;manufacturer=PKCS%2311%20Kit;serial=1;token=Default%20Trust
+pkcs11:model=Belgium%20eID;manufacturer=Belgium%20Government;serial=92101ACD12927229;token=BELPIC
+pkcs11:model=1.0;manufacturer=Gnome%20Keyring;serial=1%3aSSH%3aHOME;token=SSH%20Keys
+pkcs11:model=1.0;manufacturer=Gnome%20Keyring;serial=1%3aSECRET%3aMAIN;token=Secret%20Store
+pkcs11:model=1.0;manufacturer=Gnome%20Keyring;serial=1%3aUSER%3aDEFAULT;token=Gnome2%20Key%20Storage
+pkcs11:model=1.0;manufacturer=Gnome%20Keyring;serial=1%3aXDG%3aDEFAULT;token=User%20Key%20Storage
+pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29
+
+=> 2 with "BELPIC" inside...
+In this case take the one with PKCS (so the last one)
+p11tool --list-all --login 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29'
+=> take the URL of the one with
+	Type: X.509 Certificate
+	Label: Authentication
+=>
+Object 1:
+	URL: pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=cert
+	Type: X.509 Certificate
+	Label: Authentication
+	Flags: CKA_PRIVATE;
+	ID: 02
+
+=> pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=cert
+
+Command to connect to VPN:
+--------------------------
+(probably already installed)
+
+sudo dnf install openconnect
+
+(add pkcs11 module...
+[lamni@lp-20140054-linux /]$ cat /etc/pkcs11/modules/opensc.module
+module: /usr/lib64/opensc-pkcs11.so)
+
+forward graphical stuff for sudo
+xhost +SI:localuser:root
+
+openconnect --timestamp -v --dump-http-traffic -c 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=cert' --user=lamni damona.onprvp.fgov.be
+
+openconnect --timestamp -v --dump-http-traffic -c 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=cert' --user=lamni https://damona.onprvp.fgov.be
+
+
+
+
+openconnect --timestamp -v --dump-http-traffic -c 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=cert' --user=lamni https://damona.onprvp.fgov.be
+
+
+
+sudo openconnect --timestamp -v --dump-http-traffic -c 'pkcs11:model=Belgium%20eID;manufacturer=Belgium%20Government;serial=92101ACD12927229;token=BELPIC;id=%02%00%00%00%00%00%00%00;object=Authentication;type=cert'  https://damona.onprvp.fgov.be --user=lamni --servercert sha256:b11122aab05a4ffdae8af69e07f36250eb023f30de3598e14f90e828ce65873a
+
+
+
+Need to export "X.509 Certificate" "CA"  and use it in command:
+
+In this case, it's this path : 'pkcs11:model=Belgium%20eID;manufacturer=Belgium%20Government;serial=92101ACD12927229;token=BELPIC;id=%04%00%00%00%00%00%00%00;object=CA;type=cert'
+p11tool --export-chain --login 'pkcs11:model=Belgium%20eID;manufacturer=Belgium%20Government;serial=92101ACD12927229;token=BELPIC;id=%04%00%00%00%00%00%00%00;object=CA;type=cert' > ~/myCA.crt
+
+Good one >>>
+sudo openconnect --timestamp -v --dump-http-traffic -c 'pkcs11:model=Belgium%20eID;manufacturer=Belgium%20Government;serial=92101ACD12927229;token=BELPIC;id=%02%00%00%00%00%00%00%00;object=Authentication;type=cert'  https://damona.onprvp.fgov.be --user=lamni --servercert sha256:b11122aab05a4ffdae8af69e07f36250eb023f30de3598e14f90e828ce65873a --cafile /home/lamni/myCA.crt
+<<< Good one
+
+Benja:
+sudo openconnect -v -c 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=FDE80EFB12926054;token=BELPIC%20%28Basic%20PIN%29;id=%02;object=Authentication;type=cert' https://damona.onprvp.fgov.be --servercert sha256:b11122aab05a4ffdae8af69e07f36250eb023f30de3598e14f90e828ce65873a -v --dump-http-traffic --timestamp
+
+
+
+Possible DHCP problem when connected with VPN:
+
+[lamni@lp-20140054-linux ~]$ cat /etc/resolv.conf
+#@VPNC_GENERATED@ -- this file is generated by vpnc
+# and will be overwritten by vpnc
+# as long as the above mark is intact
+# Generated by NetworkManager
+nameserver 192.168.147.31
+nameserver 192.168.147.32
+search visitors-sfpd.be onprvp.fgov.be
+[lamni@lp-20140054-linux ~]$ cat /etc/resolv.conf
+# Generated by NetworkManager
+search visitors-sfpd.be
+nameserver 85.91.170.161
+[lamni@lp-20140054-linux ~]$ ps ax  | grep dhcp
+13683 ?        S      0:00 /sbin/dhclient -d -q -sf /usr/libexec/nm-dhcp-helper -pf /var/run/dhclient-wlp2s0.pid -lf /var/lib/NetworkManager/dhclient-033b6d38-fda9-419e-8900-708f0b1287ed-wlp2s0.lease -cf /var/lib/NetworkManager/dhclient-wlp2s0.conf wlp2s0
+14404 pts/0    S+     0:00 grep --color=auto dhcp
+
+=> Might have to kill dhclient
+
+Tests:
+
+[lamni@lp-20140054-linux ~]$ p11tool --list-privkeys --login 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29'
+Token 'Basic PIN (BELPIC)' with URL 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29' requires user PIN
+Enter PIN:
+Object 0:
+	URL: pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=private
+	Type: Private key
+	Label: Authentication
+	Flags: CKA_PRIVATE; CKA_NEVER_EXTRACTABLE; CKA_SENSITIVE;
+	ID: 02
+
+Object 1:
+	URL: pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%03;object=Signature;type=private
+	Type: Private key
+	Label: Signature
+	Flags: CKA_PRIVATE; CKA_ALWAYS_AUTH; CKA_NEVER_EXTRACTABLE; CKA_SENSITIVE;
+	ID: 03
+
+=>
+
+openconnect --timestamp -v --dump-http-traffic -c 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=cert' -k 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=private' --user=lamni damona.onprvp.fgov.be
+
+
+After connection, access following url (to "initialize the connection") ! :
+http://ldv-build01/
+
+=> PROBLEM
+[lamni@lp-20140054-linux ~]$ openconnect --timestamp -v --dump-http-traffic -c 'pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=cert' --user=lamni damona.onprvp.fgov.be
+[2018-01-09 09:21:37] POST https://damona.onprvp.fgov.be/
+[2018-01-09 09:21:37] Attempting to connect to server 85.91.186.104:443
+[2018-01-09 09:21:37] Connected to 85.91.186.104:443
+[2018-01-09 09:21:37] Using PKCS#11 certificate pkcs11:model=PKCS%2315;manufacturer=%28unknown%29;serial=92101ACD12927229;token=Basic%20PIN%20%28BELPIC%29;id=%02;object=Authentication;type=cert
+[2018-01-09 09:21:40] Error loading certificate from PKCS#11: The requested data were not available.
+[2018-01-09 09:21:40] Loading certificate failed. Aborting.
+[2018-01-09 09:21:40] Failed to open HTTPS connection to damona.onprvp.fgov.be
+Failed to obtain WebVPN cookie
+
+
+(To check devices available:
++ Driver smart card reader !
+O2Micro OZ77CR6 Smartcard Driver
+=>
+lspci
+01:00.0 SD Host controller: O2 Micro, Inc. SD/MMC Card Reader Controller (rev 01)
+
+lspci -vv
+01:00.0 SD Host controller: O2 Micro, Inc. SD/MMC Card Reader Controller (rev 01) (prog-if 01)
+	Subsystem: Dell Device 05e0
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0, Cache Line Size: 64 bytes
+	Interrupt: pin A routed to IRQ 16
+	Region 0: Memory at f7301000 (32-bit, non-prefetchable) [size=4K]
+	Region 1: Memory at f7300000 (32-bit, non-prefetchable) [size=2K]
+	Capabilities: <access denied>
+	Kernel driver in use: sdhci-pci
+	Kernel modules: sdhci_pci)
+
+
+NEW (October 2018)
+Dear Linux users,
+
+We have re-activated Cisco Anyconnect Posture checks via VPN.
+Posture Checks are not Linux compatible so,
+Please use the following url in order to authenticate your Linux machine via VPN and gain full network access:
+http://vpn-linux-check.onprvp.fgov.be
+ 
+Thanks a lot,
+Have a nice day.
+
+
+Crescendo:
+----------
+
+First check to install eID properly (previous sections).
+
+For Fedora & Firefox >= v57, you need to make sure to have the "Belgium eId PKCS#11 Module" available in
+	Preferences > Privacy & Security > bottom button: Security Devices
+
+If you don't find it, you need to add it with "Load", give the proper name and locate the Module filename: "/usr/lib64/libbeidpkcs11.so.0"
+
+That should be it :) (try to login, maybe redo it a second time by cleaning the URL, and it should work ^^)
+
+gnome-shell:
+------------
+Gnome has it own set of variables where you can configure the proxy. You can read up on a few places where you need to configure the proxy here.
+
+Your specific problem should be corrected, using this code in a shell:
+
+gsettings set org.gnome.system.proxy mode 'manual'
+gsettings set org.gnome.system.proxy.http host 'proxyusr.fediap.be'
+gsettings set org.gnome.system.proxy.http port 8080
+gsettings set org.gnome.system.proxy.ftp host 'proxyusr.fediap.be'
+gsettings set org.gnome.system.proxy.ftp port 8080
+gsettings set org.gnome.system.proxy.https host 'proxyusr.fediap.be'
+gsettings set org.gnome.system.proxy.https port 8080
+gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '*.onprvp.fgov.be', '*.sfpd.fgov.be' ]"
+
+=> Somehow, the mode reverted back to 'auto' for me, had to set 'manual' again
+
+
+Printer:
+---------
+\\SPR-PRINT01\pr-20150052
+
+set Select Connection to "Windows Printer via SAMBA" and set SMB Printer to a path like: "smb://ONPRVP/print01/PR-20030062" for the "PR-20030062" printer
+OR Select Internet Printing Protocol and use device URI : lpd://10.7.1.177/PR-20030062
+
+smb://ONPRVP/SPR-PRINT01/pr-20150052
+
+smb://ONPRVP/SPR-PRINT01/pr-20150052
+lpd://192.168.147.236/pr-20150052
+
+???
+
+=> Just select MP-2554-2 for the big one in front of kitchen
+
+
+Outlook:
+========
+vermb [10:39 AM]
+For those who are using Evolution with plugin evolution-ews:
+Configure the proxy (Automatic) in Evolution : http://proxy.onprvp.fgov.be:8080/proxy.pac
+New account:
+Type: Exchange Web Services
+username: first.lastname@sfpd.fgov.be
+host URL: https://outlook.office365.com/EWS/Exchange.asmx
+OAB URL : can be retrieve by using the url https://outlook.office365.com/EWS/Exchange.asmx in your browser (login with your email address) and copy the link provided 
+, this one should be something like that : https://vi1pr07mb3405.eurprd07.prod.outlook.com:444/EWS/Services.wsdl
+Tada !
+canas [11:34 AM]
+beurk
+vermb [3:30 PM]
+in some cases the proxy file doesn't work in evolution. You can use the ip (or dns) of the last line of the proxy.pac file.
+-- Using Thunderbird -- (partly outdated wiki: http://ldv-webserver01/wiki/index.php/Linux_On_Laptops#Exchange_configuration_for_mozilla_thunderbird_.2B_lightning_.28debian:_icedove_.2B_iceowl-extension.29)
+imap
+outlook.office365.com sur le port 993 
+connection security: ssl/tls
+auth method: normal password
+smtp: mysmtp. ...
+-- calendar in Thunderbird --
+Install addon (+Lightning?) https://github.com/ExchangeCalendar/exchangecalendar/releases/tag/v4.0.0-beta5
+new Calendar office365 -> check ... give password, should work :)
+-- LDAP --
+Add a new LDAP directory (File -> New -> LDAP Directory)
+Name: ONPRVP LDAP
+Hostname: spr-cen01.onprvp.fgov.be
+Base DN: DC=onprvp,DC=fgov,DC=be
+Port number: 3268
+Bind DB: ONPRVP\USERNAME
+-- Issues for opening meetings, ... ? -> Probably an issue with the lightning addon --
+https://bugzilla.redhat.com/show_bug.cgi?id=1526421
+=> Remove your current version of the addon and manually install version 5.4.6 example link:
+http://releases.mozilla.org/pub/calendar/lightning/candidates/5.4.6-candidates/build1/linux-x86_64/lightning-5.4.6.en-GB.linux-x86_64.xpi
+
+
+Flash
+=====
+https://www.if-not-true-then-false.com/2010/install-adobe-flash-player-10-on-fedora-centos-red-hat-rhel/#
+
+Installing EA
+==============
+https://www.sparxsystems.com/support/faq/enterprise-architect-WINE.html
+https://portal.permeance.com.au/web/terry.mueller/home1/-/blogs/how-to-run-enterprise-architect-on-64-bit-fedora-12-linux-using-crossover
+
+WINEARCH=win32 WINEPREFIX=~/.win32 winecfg
+WINEARCH=win32 WINEPREFIX=~/.win32 winetricks msxml3
+=> Proxy problem
+...
+.bashrc ... ?
+export HTTP_PROXY=http://proxyusr.fediap.be:8080
+export HTTPS_PROXY=http://proxyusr.fediap.be:8080
+export FTP_PROXY=http://proxyusr.fediap.be:8080
+=> Not working... have to use Visitor network...
+
+To make bash using the proper win32 wine by default:
+export WINEPREFIX=$HOME/.win32
+export WINEARCH=win32
+
+...
+
+WINEARCH=win32 WINEPREFIX=~/.win32 wine msiexec /i easetupfull_12.msi
+
+=> Can then find a new app "Enterprise Architect"...
+
+When trying to access project:
+Theseos Functional V4 --- DBType=3;Connect=Provider=OraOLEDB.Oracle.1;Password=archi_v4;Persist Security Info=True;User ID=Theseos_v4_EA;Data Source=DEV1
+=>
+ADOB.Connection... Provider cannot be found. It may not be properly installed.
+
+https://stackoverflow.com/questions/13922415/how-do-i-setup-oracle-odbc-drivers-on-rhel-6-linux
+
+http://www.oracle.com/technetwork/database/database-technologies/instant-client/instantclient-downloads-4362605.html
+
+yum install unixODBC
+rpm -ivh oracle-instantclient-basic-10.2.0.3-1.i386.rpm #downloaded on http://www.oracle.com/technology/software/tech/oci/instantclient/htdocs/linuxsoft.html
+unzip instantclient-odbc-linux32-10.2.0.3-20061115.zip #downloaded on http://www.oracle.com/technology/software/tech/oci/instantclient/htdocs/linuxsoft.html
+cp ./instantclient_10_2/libsqora.so.10.1 /usr/lib/oracle/10.2.0.3/client/lib/
+export ORACLE_HOME=/usr/lib/oracle/10.2.0.3/client
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
+
+https://mikesmithers.wordpress.com/2011/02/19/installing-plsqldeveloper-under-wine-in-ubuntu/
+=> To install Oracle intant client on wine...
+
+---
+
+http://www.oracle.com/technetwork/topics/dotnet/utilsoft-086879.html
+=> ODAC 11.2 Release 5 and Oracle Developer Tools for Visual Studio (11.2.0.3.20) (32 bits)
+
+=> Install it (seems to have everything needed) - may have to close some error popups
+
+
+https://mikesmithers.wordpress.com/2011/02/19/installing-plsqldeveloper-under-wine-in-ubuntu/
+=> Check if still needed to manually add the environment variables ...
+==> Check notes of Yannick
+
+
+Converting .msg outlook files to readable ones on Linux
+========================================================
+http://www.drugdesign.gr/blog/convert-microsoft-outlook-messages-msg-to-a-linux-readable-format
+
+sudo dnf install cpan
+(need visitors network for the "cpan -i ..." command to work properly)
+
+NAS:
+====
+
+theseos_sheduler_test & prod:
+smb://fileshare.onprvp.fgov.be/files/Application/
+or directly
+smb://fileshare.onprvp.fgov.be/files/Application/theseos_scheduler_test
+
+smb://fileshare.onprvp.fgov.be/files/Application/theseos_scheduler_prod
+
+Theseos_Team:
+smb://onprvp.fgov.be/files/group/OTHERFILES/Columbia/project/Theseos_Team
+
+
+Counting Mem usage of ProcessName:
+==================================
+ps -C vivaldi-bin -o %mem | grep -E "[0-9]+\.[0-9]*" -o | awk '{s+=$1} END {print s}'
+
+
+Switching shell to zsh / oh-my-zsh:
+===================================
+sudo dnf install zsh
+=> find the one liner for zsh config (will also ask to change shell using "chsh ...")
+
+Issue ? => ~/.mavenrc does not seem to be taken into account anymore !!! ???
+=> Is it because "mvn" file is a /bin/sh script (and /bin/sh is a symlink to /bin/bash ??)
+
+??? Take precautions ???
+sudo rm /bin/sh
+sudo ln -s /bin/zsh /bin/sh
+
+=> update .mavenrc to do "export key=value" instead of "key=value"...
+
+=> put all export xxx=xxx statements in
+.zprofile instead of .zshrc (and for bash; in .profile instead of .bashrd); so that they are loaded only once at login...
+
+!! the loading of projectListComplete should still be done in.xxxrc file
+source $MISC/_projectListCompletezsh
+
+
+Setting history config
+=======================
+in .zshrc file ?
+
+HISTFILE=~/.zsh_history
+HISTSIZE=10000			#(size to keep in memory)
+SAVEHIST=$HISTSIZE		#(size to keep in file)
+setopt hist_ignore_all_dups		#(remove oldest history duplicate)
+
+other example:
+#set history size
+export HISTSIZE=10000
+#save history after logout
+export SAVEHIST=10000
+#history file
+export HISTFILE=~/.zhistory
+#append into history file
+setopt INC_APPEND_HISTORY
+#save only one command if 2 common are same and consistent
+setopt HIST_IGNORE_DUPS
+#add timestamp for each entry
+setopt EXTENDED_HISTORY   
+
+
+GlueTests
+==========
+mvn glue:ts -Dcolors=true -DxmlResults=false -DdbResults=false -DpoolSize=3 -Denvironment=green -Dbranch=eenheid -Dtestsuite="V42DPC"
+mvn glue:ts -Dcolors=true -DxmlResults=false -DdbResults=false -DpoolSize=3 -Denvironment=green -Dbranch=eenheid -Dtestsuite="V42Rest"
+mvn glue:ts -Dcolors=true -DxmlResults=false -DdbResults=false -DpoolSize=3 -Denvironment=green -Dbranch=eenheid -Dtestsuite="V42RestCalcul"
+mvn glue:ts -Dcolors=true -DxmlResults=false -DdbResults=false -DpoolSize=3 -Denvironment=green -Dbranch=eenheid -Dtestsuite="V42RestMass"
+mvn glue:ts -Dcolors=true -DxmlResults=false -DdbResults=false -DpoolSize=3 -Denvironment=green -Dbranch=eenheid -Dtestsuite="myCareer"
+
+
+Switch version name between develop and green
+==============================================
+From: develop-xx.xx-SNAPSHOT To: develop-xx.xx-green-SNAPSHOT
+find -name "pom.xml" -print0 | xargs -0 sed -r 's/version>develop-([0-9\.]+)-SNAPSHOT/version>develop-\1-green-SNAPSHOT/g' -bi
+
+From: develop-xx.xx-green-SNAPSHOT To: develop-xx.xx-SNAPSHOT
+find -name "pom.xml" -print0 | xargs -0 sed -r 's/version>develop-([0-9\.]+)-green-SNAPSHOT/version>develop-\1-SNAPSHOT/g' -bi
+
+
+Find java classes with number of lines matching their class name
+=================================================================
+find -name "*.java" -type f -print0 | xargs -0 -I {} bash -c "echo {} | sed -r 's/(.*\/([^\/]*)\.java)/grep -r -H -c \2 \1/g'" | bash
+
+
+Trying out Awesome WM (Window Manager)
+======================================
+https://www.addictivetips.com/ubuntu-linux-tips/guide-awesomewm-windows-manager/
+
+
+System-upgrade to Fedora 28
+===========================
+Tried using gnome-software, fails at restart (without any explanation)
+
+Trying through dnf:
+https://fedoramagazine.org/upgrading-fedora-27-fedora-28/
+
+sudo -i dnf install dnf-plugin-system-upgrade
+
+sudo -i dnf system-upgrade download --releasever=28
+=> Issue about nss-pem... package => https://bugzilla.redhat.com/show_bug.cgi?id=1553646
+
+Proposed solution to force upgrade it:
+sudo -i dnf install nss-pem-1.0.3-9.fc28 --releasever=28
+
+=> Then the previous command passes and the download can start
+sudo -i dnf system-upgrade download --releasever=28
+
+When done:
+sudo dnf system-upgrade reboot
+
+In case of issues after upgrade, check in https://fedoraproject.org/wiki/DNF_system_upgrade#Resolving_post-upgrade_issues
+
+
+How to get rid of the Emoji popup (ctrl + shift + e) ?
+=======================================================
+
+command: ibus-setup
+ > Emoji > Key (...) > delete
+
+
+GIT
+====
+
+Sudden issue in command line like this:
+➜  git/theseos git:(develop) ✗ git fetch                      
+sign_and_send_pubkey: signing failed: agent refused operation
+Password: 
+
+=> https://stackoverflow.com/questions/44250002/sign-and-send-pubkey-signing-failed-agent-refused-operation
+Somehow, openssh restrictions became more strict or my ssh key changed of access rights:
+
+➜  git/theseos git:(develop) ✗ ssh-add
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0664 for '/home/lamni/.ssh/id_rsa' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+
+➜  ~/.ssh ll
+total 12K
+-rw-rw-r--. 1 lamni lamni 1.8K Jan  4  2018 id_rsa
+...
+
+To fix it:
+➜  ~/.ssh chmod 600 id_rsa
+➜  ~/.ssh ll
+total 12K
+-rw-------. 1 lamni lamni 1.8K Jan  4  2018 id_rsa
+
+➜  git/theseos git:(develop) ✗ ssh-add
+
+➜  git/theseos git:(develop) ✗ ssh-add -l
+(should be ok now)
+
+
+CPU Governor config
+====================
+https://dunterov.github.io/cpu-freq/
+
+By default we are using "powersave" governor, doing the changes in the website will default to "ondemand"
+
+
+
+Changing windows password from Linux
+====================================
+
+(10:18:51) BRESSINCK Tuur: krb5-workstation is indeed what I have installed
+(09:38:19) BRESSINCK Tuur: # To opt out of the system crypto-policies configuration of krb5, remove the 
+# symlink at /etc/krb5.conf.d/crypto-policies which will not be recreated. 
+includedir /etc/krb5.conf.d/ 
+ 
+[logging] 
+ default = FILE:/var/log/krb5libs.log 
+ kdc = FILE:/var/log/krb5kdc.log 
+ admin_server = FILE:/var/log/kadmind.log 
+ 
+[libdefaults] 
+	default_realm = ONPRVP.FGOV.BE 
+
+	dns_lookup_realm = true 
+	dns_lookup_kdc = true 
+	rdns = false 
+	kdc_timesync = 1 
+	#ticket_lifetime = 24h 
+	#renew_lifetime = 7d 
+	#default_ccache_name = KEYRING:persistent:%{uid} 
+	ccache_type = 4 
+	forwardable = true 
+	proxiable = true 
+ 
+[realms] 
+	ONPRVPFGOV.BE = { 
+		default_domain = ONPRVP.FGOV.BE 
+		kdc = spr-cen01.onprvp.fgov.be 
+		#kdc = spr-cen02.onprvp.fgov.be 
+		#kdc = spr-cen03.onprvp.fgov.be 
+		#kdc = spr-cen99.onprvp.fgov.be 
+		#admin_server = spr-cen01.onprvp.fgov.be 
+	} 
+ 
+[domain_realm] 
+	.onprvp.fgov.be = ONPRVP.FGOV.BE 
+	onprvp.fgov.be = ONPRVP.FGOV.BE
+(09:38:28) BRESSINCK Tuur: my /etc/krb5.conf
+(09:39:04) BRESSINCK Tuur: and then just use kpasswd to change your password
+
+kinit => existing pwd
+klist => gives info of expiration date
+kpasswd => to be able to change the password
+
+(14:06:10) BRESSINCK Tuur: ask seb if you doubtn
+(14:07:24) BRESSINCK Tuur: https://docs.oracle.com/cd/E36784_01/html/E37126/kplanning-27.html#scrolltoc
+
+
+Cinnamon Desktop
+=================
+sudo -i dnf groupinstall -y "Cinnamon Desktop"
+=> At login screen, choose cinnamon in the little wheel menu
+!!! Change some shortcuts to avoid issues with intellij
+=> Alt+F7, Ctrl+Alt+L, Ctrl+Alt+Left/Right, ...
+
+Cinnamon applets to try:
+(10:04:14) RUCKINEER Michaël: https://cinnamon-spices.linuxmint.com/applets/view/281
+(10:04:45) RUCKINEER Michaël: http://cinnamon-spices.linuxmint.com/applets/view/106
+(10:04:58) RUCKINEER Michaël: http://cinnamon-spices.linuxmint.com/applets/view/238
+(10:05:18) RUCKINEER Michaël: http://cinnamon-spices.linuxmint.com/applets/view/79

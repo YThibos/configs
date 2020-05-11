@@ -1,0 +1,41 @@
+[user]
+	email = yannick.thibos@sfpd.fgov.be
+	name = Yannick Thibos
+[alias]
+	st = status
+	ci = commit
+	co = checkout
+	br = branch
+	diffc = diff --staged
+	hist = log --pretty=format:'%Cred%h%Creset %Cgreen(%ci)%Creset - %C(yellow)%d%Creset%s %C(bold blue)[%an]%Creset' --abbrev-commit
+	histgraph = log --pretty=format:'%Cred%h%Creset %Cgreen(%ci)%Creset - %C(yellow)%d%Creset%s %C(bold blue)[%an]%Creset' --abbrev-commit --graph
+	lg = log --pretty=format:'%Cred%h%Creset %Cgreen(%ci)%Creset - %C(yellow)%d%Creset%s %C(bold blue)[%an]%Creset' --abbrev-commit
+	unstage = reset HEAD --
+	ustg = reset HEAD --
+	last = log -1 --stat
+	cp = cherry-pick
+	cl = clone
+	dc = diff --cached
+[color]
+	ui = true
+[push]
+	default = matching
+[credential]
+	helper = cache --timeout=3600
+[merge]
+	tool = vimdiff
+[mergetool]
+	keeptemporaries = false
+	keepbackups = false
+	prompt = false
+	trustexitcode = false
+[pull]
+	rebase = true
+[gui]
+	recentrepo = C:/Development/sources/theseos
+[grep]
+	extendedRegexp = true
+[rerere]
+	enabled = true
+[core]
+	autocrlf = input
